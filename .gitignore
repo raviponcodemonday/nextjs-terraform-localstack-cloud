@@ -1,0 +1,12 @@
+# ไฟล์ความลับและค่าตั้งค่าส่วนตัว
+.env
+
+# ไฟล์ขยะและประวัติของ Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# ไฟล์ของ Next.js และ Node.js
+**/node_modules/
+**/.next/

@@ -1,0 +1,21 @@
+services:
+  # กล่องที่ 1: สนามซ้อม AWS (LocalStack)
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+    environment:
+      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
+      - SERVICES=s3,ec2
+
+  # กล่องที่ 2: เว็บแอปพลิเคชัน Next.js
+  nextjs-app:
+    build: ./my-nextjs-app # บอกให้ไปอ่าน Dockerfile ในโฟลเดอร์ my-nextjs-app
+    ports:
+      - "3000:3000"
+    environment:
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+    depends_on:
+      - localstack # สั่งให้เปิด localstack ก่อน แล้วค่อยเปิด nextjs-app

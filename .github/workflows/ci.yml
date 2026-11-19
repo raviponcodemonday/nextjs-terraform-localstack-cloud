@@ -1,0 +1,42 @@
+name: Cloud Infrastructure & App CI
+
+# 1. กำหนดเงื่อนไข: ให้หุ่นยนต์เริ่มทำงานเมื่อมีการ push โค้ดขึ้น branch main
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # งานที่ 1: ตรวจสอบความถูกต้องของโค้ด Terraform
+  terraform-check:
+    name: Validate Terraform IaC
+    runs-on: ubuntu-latest # ขอคอมพิวเตอร์ Linux ฟรีจาก GitHub
+
+    steps:
+      - name: 1. ดึงโค้ดจาก GitHub ลงมาในเครื่องจำลอง
+        uses: actions/checkout@v4
+
+      - name: 2. ติดตั้งโปรแกรม Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: 3. เตรียมปลั๊กอิน AWS (ไม่ต้องต่อ Cloud จริง)
+        run: terraform init -backend=false
+
+      - name: 4. ตรวจการจัดระเบียบย่อหน้าโค้ด (Formatting)
+        run: terraform fmt -check
+
+      - name: 5. ตรวจไวยากรณ์และโครงสร้างโค้ดว่ามีจุดพิมพ์ผิดไหม
+        run: terraform validate
+
+  # งานที่ 2: ทดสอบประกอบร่าง Docker Image ของ Next.js
+  docker-build-check:
+    name: Build Next.js Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. ดึงโค้ดจาก GitHub ลงมาในเครื่องจำลอง
+        uses: actions/checkout@v4
+
+      - name: 2. ทดสอบ Build กล่อง Docker (docker build)
+        run: docker build -t my-nextjs-cloud-app ./my-nextjs-app
