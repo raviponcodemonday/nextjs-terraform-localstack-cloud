@@ -72,3 +72,38 @@ output "created_public_subnet_id" {
 output "created_private_subnet_id" {
   value = aws_subnet.private_subnet.id
 }
+
+# Firewall สำหรับฝั่ง Public (เปิดรับคนเข้าเว็บพอร์ต 3000)
+resource "aws_security_group" "public_sg" {
+  name        = "public-web-sg"
+  description = "Allow HTTP/Next.js inbound traffic"
+  vpc_id      = aws_vpc.my_vpc.id
+
+  ingress {
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# Firewall สำหรับฝั่ง Private (อนุญาตเฉพาะกลุ่ม public_sg เท่านั้นที่เข้ามาคุยได้)
+resource "aws_security_group" "private_sg" {
+  name        = "private-db-sg"
+  description = "Allow traffic only from Public Security Group"
+  vpc_id      = aws_vpc.my_vpc.id
+
+  ingress {
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
+    security_groups = [aws_security_group.public_sg.id]
+  }
+}

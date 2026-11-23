@@ -1,0 +1,26 @@
+# 1. โฟลเดอร์แพ็กเกจและไฟล์ Build เก่าในเครื่อง (ให้ Docker ไปสร้างใหม่ข้างใน)
+node_modules
+.next
+out
+
+# 2. ไฟล์ความลับและค่าตั้งค่าส่วนตัว (ห้ามหลุดเข้า Image เด็ดขาด)
+.env
+.env.*
+*.local
+
+# 3. ไฟล์ระบบ Git และ GitHub (ไม่จำเป็นต้องใช้ตอนรันเว็บ)
+.git
+.gitignore
+.github
+
+# 4. ไฟล์ Docker เองและเอกสาร (ลดขนาด Build Context)
+Dockerfile
+.dockerignore
+docker-compose.yml
+README.md
+
+# 5. ไฟล์ Log และขยะของระบบปฏิบัติการ
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
